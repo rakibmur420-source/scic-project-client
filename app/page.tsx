@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { api } from "@/lib/api";
 import { Product, Category } from "@/lib/types";
 import ProductCard from "@/components/ProductCard";
+import Hero from "@/components/Hero";
 
 function ProductGrid() {
   const searchParams = useSearchParams();
@@ -38,54 +39,70 @@ function ProductGrid() {
   }, [search, categoryId]);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
-      <div className="mb-8">
-        <h1 className="font-display text-3xl md:text-4xl font-semibold">
-          {search ? `Results for "${search}"` : "Everyday goods, honestly priced"}
-        </h1>
-        <p className="text-muted mt-1">
-          {search ? `${products.length} product(s) found` : "Browse the full catalog below."}
-        </p>
-      </div>
+    <>
+      <Hero />
 
-      <div className="flex gap-2 mb-6 overflow-x-auto pb-1">
-        <button
-          onClick={() => setCategoryId("")}
-          className={`px-3 py-1.5 rounded-full text-sm border whitespace-nowrap transition-colors ${
-            categoryId === "" ? "bg-primary text-white border-primary" : "border-border hover:border-primary"
-          }`}
-        >
-          All
-        </button>
-        {categories.map((c) => (
+      <section id="catalog" className="mx-auto max-w-6xl px-4 py-12 scroll-mt-20">
+        <div className="mb-6">
+          <h2 className="font-display text-2xl md:text-3xl font-semibold">
+            {search ? `Results for "${search}"` : "Browse the catalog"}
+          </h2>
+          <p className="text-muted mt-1 text-sm">
+            {search ? `${products.length} product(s) found` : "Fresh picks, updated regularly."}
+          </p>
+        </div>
+
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-1">
           <button
-            key={c.id}
-            onClick={() => setCategoryId(c.id)}
+            onClick={() => setCategoryId("")}
             className={`px-3 py-1.5 rounded-full text-sm border whitespace-nowrap transition-colors ${
-              categoryId === c.id ? "bg-primary text-white border-primary" : "border-border hover:border-primary"
+              categoryId === "" ? "bg-primary text-white border-primary" : "border-border hover:border-primary"
             }`}
           >
-            {c.name}
+            All
           </button>
-        ))}
-      </div>
+          {categories.map((c) => (
+            <button
+              key={c.id}
+              onClick={() => setCategoryId(c.id)}
+              className={`px-3 py-1.5 rounded-full text-sm border whitespace-nowrap transition-colors ${
+                categoryId === c.id ? "bg-primary text-white border-primary" : "border-border hover:border-primary"
+              }`}
+            >
+              {c.name}
+            </button>
+          ))}
+        </div>
 
-      {loading && <p className="text-muted">Loading products…</p>}
-      {error && (
-        <p className="text-error text-sm">
-          Couldn&apos;t reach the backend: {error}. Make sure the API server is running.
-        </p>
-      )}
-      {!loading && !error && products.length === 0 && (
-        <p className="text-muted">No products found. Try a different search or category.</p>
-      )}
+        {loading && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="animate-pulse">
+                <div className="aspect-square bg-surface border border-border rounded-lg mb-3" />
+                <div className="h-3 bg-surface rounded w-2/3 mb-2" />
+                <div className="h-3 bg-surface rounded w-1/3" />
+              </div>
+            ))}
+          </div>
+        )}
+        {error && (
+          <p className="text-error text-sm">
+            Couldn&apos;t reach the backend: {error}. Make sure the API server is running.
+          </p>
+        )}
+        {!loading && !error && products.length === 0 && (
+          <p className="text-muted">No products found. Try a different search or category.</p>
+        )}
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-        {products.map((p) => (
-          <ProductCard key={p.id} product={p} />
-        ))}
-      </div>
-    </div>
+        {!loading && !error && products.length > 0 && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {products.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        )}
+      </section>
+    </>
   );
 }
 

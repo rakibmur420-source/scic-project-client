@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <CartProvider>
             <Navbar />
             <main className="flex-1">{children}</main>
+            <Footer />
           </CartProvider>
         </AuthProvider>
       </body>
